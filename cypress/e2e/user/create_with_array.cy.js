@@ -25,11 +25,8 @@ describe('Teste de criar lista de usuários com array', () => {
     ];
 
     it('Cria uma lista de usuários com sucesso usando array', () => {
-        cy.request({
-            method: 'POST',
-            url: '/user/createWithArray',
-            body: users,
-        }).then((response) => {
+        cy.request('POST', 'user/createWithArray', users)
+        .then((response) => {
             expect(response.status).to.eq(200);
         });
     });
@@ -39,11 +36,11 @@ describe('Teste de criar lista de usuários com array', () => {
 
         cy.request({
             method: 'POST',
-            url: '/user/createWithArray',
+            url: 'user/createWithArray',
             body: duplicateIdUsers,
             failOnStatusCode: false
         }).then((response) => {
-            expect(response.status).to.eq(400); // supondo que a API retorna 400 para IDs duplicados
+            expect(response.status).to.eq(400); 
         });
     });
 
@@ -53,11 +50,11 @@ describe('Teste de criar lista de usuários com array', () => {
 
         cy.request({
             method: 'POST',
-            url: '/user/createWithArray',
+            url: 'user/createWithArray',
             body: usersWithMissingId,
             failOnStatusCode: false
         }).then((response) => {
-            expect(response.status).to.eq(400); // supondo que a API retorna 400 para usuários sem ID
+            expect(response.status).to.eq(400); 
         });
     });
 
@@ -67,24 +64,52 @@ describe('Teste de criar lista de usuários com array', () => {
 
         cy.request({
             method: 'POST',
-            url: '/user/createWithArray',
+            url: 'user/createWithArray',
             body: usersWithInvalidEmail,
             failOnStatusCode: false
         }).then((response) => {
-            expect(response.status).to.eq(400); // supondo que a API retorna 400 para emails inválidos
+            expect(response.status).to.eq(400); 
         });
     });
+
     it('Não deve permitir a criação de uma lista de usuários vazia', () => {
         const emptyUsers = [];
 
         cy.request({
             method: 'POST',
-            url: '/user/createWithArray',
+            url: 'user/createWithArray',
             body: emptyUsers,
             failOnStatusCode: false
         }).then((response) => {
-            expect(response.status).to.eq(400); // supondo que a API retorna 400 para uma lista de usuários vazia
-        });
+            expect(response.status).to.eq(400);
     });
 });
 
+it('Não deve permitir a criação de usuários com userStatus diferente de 0 e 1', () => {
+    const userWithInvalidStatus = {...users[0], userStatus: 3};
+    const usersWithInvalidStatus = [...users, userWithInvalidStatus];
+
+    cy.request({
+        method: 'POST',
+        url: 'user/createWithArray',
+        body: usersWithInvalidStatus,
+        failOnStatusCode: false
+    }).then((response) => {
+        expect(response.status).to.eq(400);
+    });
+});
+
+it('Não deve permitir a criação de usuários sem nome de usuário', () => {
+    const userWithoutUsername = {...users[0], username: undefined};
+    const usersWithoutUsername = [...users, userWithoutUsername];
+
+    cy.request({
+        method: 'POST',
+        url: 'user/createWithArray',
+        body: usersWithoutUsername,
+        failOnStatusCode: false
+    }).then((response) => {
+        expect(response.status).to.eq(400);
+    });
+});
+});

@@ -43,7 +43,7 @@ describe('Teste de criar lista de usuários', () => {
             body: duplicateIdUsers,
             failOnStatusCode: false
         }).then((response) => {
-            expect(response.status).to.eq(400); // supondo que a API retorna 400 para IDs duplicados
+            expect(response.status).to.eq(400);  //Supondo que retorne bad request (400)
         });
     });
 
@@ -57,7 +57,7 @@ describe('Teste de criar lista de usuários', () => {
             body: usersWithMissingId,
             failOnStatusCode: false
         }).then((response) => {
-            expect(response.status).to.eq(400); // supondo que a API retorna 400 para usuários sem ID
+            expect(response.status).to.eq(400); 
         });
     });
 
@@ -71,7 +71,7 @@ describe('Teste de criar lista de usuários', () => {
             body: usersWithInvalidEmail,
             failOnStatusCode: false
         }).then((response) => {
-            expect(response.status).to.eq(400); // supondo que a API retorna 400 para emails inválidos
+            expect(response.status).to.eq(400); 
         });
     });
 
@@ -84,7 +84,7 @@ describe('Teste de criar lista de usuários', () => {
             body: emptyUsers,
             failOnStatusCode: false
         }).then((response) => {
-            expect(response.status).to.eq(400); // supondo que a API retorna 400 para uma lista de usuários vazia
+            expect(response.status).to.eq(400); 
         });
     });
 });

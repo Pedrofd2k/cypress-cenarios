@@ -1,18 +1,18 @@
 /// <reference types="cypress" />
 
-describe('Teste de criar usuário', () => {
+describe('Teste de criação de usuário', () => {
     const user = {
         id: 1,
-        username: 'testuser',
-        firstName: 'Test',
-        lastName: 'User',
-        email: 'testuser@example.com',
+        username: 'testuser1',
+        firstName: 'Test1',
+        lastName: 'User1',
+        email: 'testuser1@example.com',
         password: 'test123',
         phone: '1234567890',
         userStatus: 1,
     };
 
-    it('Criar um novo usuário com sucesso', () => {
+    it('Cria um usuário com sucesso', () => {
         cy.request({
             method: 'POST',
             url: '/user',
@@ -27,22 +27,9 @@ describe('Teste de criar usuário', () => {
             method: 'POST',
             url: '/user',
             body: user,
-            failOnStatusCode: false // para que Cypress não falhe automaticamente em um status de erro HTTP
-        }).then((response) => {
-            expect(response.status).to.eq(400); // supondo que a API retorna 400 para IDs duplicados
-        });
-    });
-
-    it('Não deve permitir a criação de um usuário sem ID', () => {
-        const userWithoutId = {...user, id: undefined};
-
-        cy.request({
-            method: 'POST',
-            url: '/user',
-            body: userWithoutId,
             failOnStatusCode: false
         }).then((response) => {
-            expect(response.status).to.eq(400); // supondo que a API retorna 400 para usuários sem ID
+            expect(response.status).to.eq(400); // supondo que a API retorna 400 para IDs duplicados
         });
     });
 
@@ -56,6 +43,32 @@ describe('Teste de criar usuário', () => {
             failOnStatusCode: false
         }).then((response) => {
             expect(response.status).to.eq(400); // supondo que a API retorna 400 para emails inválidos
+        });
+    });
+
+    it('Não deve permitir a criação de um usuário sem nome de usuário', () => {
+        const userWithoutUsername = {...user, username: undefined};
+
+        cy.request({
+            method: 'POST',
+            url: '/user',
+            body: userWithoutUsername,
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eq(400); // supondo que a API retorna 400 para usuários sem nome de usuário
+        });
+    });
+
+    it('Não deve permitir a criação de um usuário com userStatus diferente de 0 e 1', () => {
+        const userWithInvalidStatus = {...user, userStatus: 3};
+
+        cy.request({
+            method: 'POST',
+            url: '/user',
+            body: userWithInvalidStatus,
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eq(400); // supondo que a API retorna 400 para status de usuário inválidos
         });
     });
 });

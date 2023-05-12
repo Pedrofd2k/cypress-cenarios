@@ -1,67 +1,66 @@
 /// <reference types="cypress" />
 
 describe('Teste de login do usuário', () => {
-    const username = 'testuser';
+    const username = 'testuser1';
     const password = 'test123';
 
-    it('Realizar login com sucesso', () => {
+    it('Faz login com sucesso usando nome de usuário e senha', () => {
         cy.request({
             method: 'GET',
-            url: `/user/login?username=${username}&password=${password}`,
+            url: `user/login?username=${username}&password=${password}`,
         }).then((response) => {
             expect(response.status).to.eq(200);
-            expect(response.headers).to.have.property('x-expires-after');
-            expect(response.headers).to.have.property('x-rate-limit');
-        });
-    });
-
-    it('Não deve permitir login com nome de usuário incorreto', () => {
-        cy.request({
-            method: 'GET',
-            url: `/user/login?username=wrong&password=${password}`,
-            failOnStatusCode: false
-        }).then((response) => {
-            expect(response.status).to.eq(403); // supondo que a API retorna 403 para credenciais inválidas
+            expect(response.body.message).to.include('logged in user session');
         });
     });
 
     it('Não deve permitir login com senha incorreta', () => {
         cy.request({
             method: 'GET',
-            url: `/user/login?username=${username}&password=wrong`,
+            url: `user/login?username=${username}&password=wrongpassword`,
             failOnStatusCode: false
         }).then((response) => {
-            expect(response.status).to.eq(403); // supondo que a API retorna 403 para credenciais inválidas
+            expect(response.status).to.eq(400); //400 bad request erro padrão da api pra Invalid username/password supplied
         });
     });
 
-    it('Não deve permitir login com nome de usuário e senha em branco', () => {
+    it('Não deve permitir login com nome de usuário inexistente', () => {
         cy.request({
             method: 'GET',
-            url: `/user/login?username=&password=`,
+            url: `user/login?username=fakeuser&password=${password}`,
             failOnStatusCode: false
         }).then((response) => {
-            expect(response.status).to.eq(403); // supondo que a API retorna 403 para credenciais inválidas
+            expect(response.status).to.eq(400);
         });
     });
 
-    it('Não deve permitir login com nome de usuário em branco e senha correta', () => {
+    it('Não deve permitir login sem senha', () => {
         cy.request({
             method: 'GET',
-            url: `/user/login?username=&password=${password}`,
+            url: `user/login?username=${username}`,
             failOnStatusCode: false
         }).then((response) => {
-            expect(response.status).to.eq(403); // supondo que a API retorna 403 para credenciais inválidas
+            expect(response.status).to.eq(400);
         });
     });
 
-    it('Não deve permitir login com nome de usuário correto e senha em branco', () => {
+    it('Não deve permitir login sem nome de usuário', () => {
         cy.request({
             method: 'GET',
-            url: `/user/login?username=${username}&password=`,
+            url: `user/login?password=${password}`,
             failOnStatusCode: false
         }).then((response) => {
-            expect(response.status).to.eq(403); // supondo que a API retorna 403 para credenciais inválidas
+            expect(response.status).to.eq(400); 
+        });
+    });
+
+    it('Não deve permitir login sem nome de usuário e senha', () => {
+        cy.request({
+            method: 'GET',
+            url: `user/login`,
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eq(400); 
         });
     });
 });
