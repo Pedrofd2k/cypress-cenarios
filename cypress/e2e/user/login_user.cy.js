@@ -7,7 +7,11 @@ describe('Teste de login do usuário', () => {
     it('Faz login com sucesso usando nome de usuário e senha', () => {
         cy.request({
             method: 'GET',
-            url: `user/login?username=${username}&password=${password}`,
+            url: 'user/login',
+            body: {
+                username: username,
+                password: password
+            }
         }).then((response) => {
             expect(response.status).to.eq(200);
             expect(response.body.message).to.include('logged in user session');
@@ -17,17 +21,25 @@ describe('Teste de login do usuário', () => {
     it('Não deve permitir login com senha incorreta', () => {
         cy.request({
             method: 'GET',
-            url: `user/login?username=${username}&password=wrongpassword`,
+            url: 'user/login',
+            body: {
+                username: username,
+                password: 'wrongpassword'
+            },
             failOnStatusCode: false
         }).then((response) => {
-            expect(response.status).to.eq(400); //400 bad request erro padrão da api pra Invalid username/password supplied
+            expect(response.status).to.eq(400);
         });
     });
 
     it('Não deve permitir login com nome de usuário inexistente', () => {
         cy.request({
             method: 'GET',
-            url: `user/login?username=fakeuser&password=${password}`,
+            url: 'user/login',
+            body: {
+                username: 'fakeuser',
+                password: password
+            },
             failOnStatusCode: false
         }).then((response) => {
             expect(response.status).to.eq(400);
@@ -37,7 +49,10 @@ describe('Teste de login do usuário', () => {
     it('Não deve permitir login sem senha', () => {
         cy.request({
             method: 'GET',
-            url: `user/login?username=${username}`,
+            url: 'user/login',
+            body: {
+                username: username
+            },
             failOnStatusCode: false
         }).then((response) => {
             expect(response.status).to.eq(400);
@@ -47,20 +62,23 @@ describe('Teste de login do usuário', () => {
     it('Não deve permitir login sem nome de usuário', () => {
         cy.request({
             method: 'GET',
-            url: `user/login?password=${password}`,
+            url: 'user/login',
+            body: {
+                password: password
+            },
             failOnStatusCode: false
         }).then((response) => {
-            expect(response.status).to.eq(400); 
+            expect(response.status).to.eq(400);
         });
     });
 
     it('Não deve permitir login sem nome de usuário e senha', () => {
         cy.request({
             method: 'GET',
-            url: `user/login`,
+            url: 'user/login',
             failOnStatusCode: false
         }).then((response) => {
-            expect(response.status).to.eq(400); 
+            expect(response.status).to.eq(400);
         });
     });
 });
